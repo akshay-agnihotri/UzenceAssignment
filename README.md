@@ -6,8 +6,8 @@ A modern React component library featuring highly customizable InputField and Da
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- Node.js 18 or higher
+- npm (or yarn/pnpm)
 
 ### Installation & Setup
 
@@ -38,6 +38,57 @@ A modern React component library featuring highly customizable InputField and Da
    ```
    Storybook will be available at `http://localhost:6006`
 
+## 📁 Folder Structure
+
+```text
+UzenceAssignment/
+├─ .github/
+├─ .storybook/
+│  ├─ main.ts
+│  ├─ preview.ts
+│  └─ vitest.setup.ts
+├─ public/
+│  └─ vite.svg
+├─ src/
+│  ├─ components/
+│  │  ├─ DataTable/
+│  │  │  ├─ DataTable.tsx
+│  │  │  ├─ DataTable.stories.tsx
+│  │  │  ├─ types.ts          # re-exports shared types
+│  │  │  └─ index.ts          # component export
+│  │  ├─ InputField/
+│  │  │  ├─ InputField.tsx
+│  │  │  ├─ InputField.stories.tsx
+│  │  │  ├─ InputField.types.ts # re-exports shared types
+│  │  │  └─ index.ts
+│  │  ├─ ThemeToggle/
+│  │  │  ├─ ThemeToggle.tsx
+│  │  │  └─ index.ts
+│  │  └─ index.ts             # library exports (components + types)
+│  ├─ stories/                # Storybook example stories
+│  ├─ types/
+│  │  └─ types.ts             # centralized shared types
+│  ├─ App.tsx
+│  ├─ main.tsx
+│  ├─ index.css
+│  └─ vite-env.d.ts
+├─ index.html
+├─ package.json
+├─ tailwind.config.js
+├─ vite.config.ts
+└─ README.md
+```
+
+## 🧭 Approach Summary
+
+- **Modular architecture**: Each component has an isolated folder (implementation, stories, local types, and exports).
+- **Centralized types**: Shared interfaces (InputFieldProps, DataTableProps, Column, SortDirection) live in `src/types/types.ts` and are re-exported for DX-friendly imports.
+- **Accessibility-first**: Proper ARIA attributes, keyboard interactions, screen reader support, and high-contrast states.
+- **Tailwind utility-first styling**: Consistent variants (`filled`, `outlined`, `ghost`), sizes, dark mode, and responsive behavior.
+- **Type-safe, generic DataTable**: Sorting, selection, and custom renderers with strict TypeScript generics.
+- **Performance-conscious**: `useMemo`/`useCallback` to minimize re-renders, lightweight icons via `lucide-react`.
+- **Comprehensive Storybook**: Interactive docs, variants, states, and real-world examples to aid discovery and QA.
+
 ## 📦 Components
 
 ### InputField Component
@@ -58,6 +109,7 @@ A flexible and accessible input component with comprehensive validation and them
 #### Basic Usage
 
 ```tsx
+import { useState } from "react";
 import { InputField } from "./components";
 
 function MyForm() {
@@ -80,7 +132,8 @@ function MyForm() {
 #### Props Interface
 
 ```typescript
-interface InputFieldProps {
+// Mirrors src/types/types.ts
+export interface InputFieldProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label?: string;
@@ -92,10 +145,17 @@ interface InputFieldProps {
   loading?: boolean;
   variant?: "filled" | "outlined" | "ghost";
   size?: "sm" | "md" | "lg";
-  type?: "text" | "email" | "password" | "number" | "tel" | "url";
+  type?: "text" | "password" | "email" | "number";
   showClearButton?: boolean;
-  onClear?: () => void;
+  showPasswordToggle?: boolean;
+  id?: string;
+  name?: string;
   className?: string;
+  onClear?: () => void;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
 }
 ```
 
@@ -118,8 +178,7 @@ A comprehensive data table with sorting, selection, and custom rendering capabil
 #### Basic Usage
 
 ```tsx
-import { DataTable } from "./components";
-import type { Column } from "./components/DataTable/types";
+import { DataTable, type Column } from "./components";
 
 interface User {
   id: number;
@@ -154,7 +213,8 @@ function UserList() {
 #### Props Interface
 
 ```typescript
-interface DataTableProps<T> {
+// Mirrors src/types/types.ts
+export interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
@@ -165,7 +225,7 @@ interface DataTableProps<T> {
   className?: string;
 }
 
-interface Column<T> {
+export interface Column<T> {
   key: keyof T;
   header: string;
   sortable?: boolean;
@@ -283,7 +343,7 @@ Complete dark mode implementation:
 - `npm run storybook` - Start Storybook documentation
 - `npm run build-storybook` - Build Storybook for deployment
 - `npm run lint` - Run ESLint
-- `npm run type-check` - Run TypeScript compiler check
+
 
 ## 🤝 Contributing
 
